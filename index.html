@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Sense - POLINEMA</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --accent-bg: #f0f9ff;
+            --accent-border: #bae6fd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 780px;
+            padding: 2.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .badge {
+            align-self: center;
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-bg);
+            border: 1px solid var(--accent-border);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .departments {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .dept-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.1rem 1rem;
+            text-align: left;
+        }
+
+        .dept-card h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .dept-card p {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+        }
+
+        footer {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .departments {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div>
+            <h1>Power Sense Project</h1>
+            <p class="subtitle">Developed by Electrical Engineering &amp; Information Technology, POLINEMA</p>
+        </div>
+
+        <p class="description">
+            A collaborative research and development initiative uniting physical electrical infrastructure with modern cloud and IoT technologies to build intelligent, scalable, and data-driven solutions for sustainable campus energy management.
+        </p>
+
+        <div class="departments">
+            <div class="dept-card">
+                <h3>Jurusan Teknik Elektro (JTE)</h3>
+            </div>
+            <div class="dept-card">
+                <h3>Jurusan Teknologi Informasi (JTI)</h3>
+            </div>
+        </div>
+
+        <footer>
+            Power Sense POLINEMA &bull; Empowering Smart and Sustainable Campus Energy Management
+        </footer>
+    </main>
+</body>
+</html>
