@@ -1,162 +1,506 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Sense - POLINEMA</title>
-    <style>
-        :root {
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #64748b;
-            --accent: #0284c7;
-            --accent-bg: #f0f9ff;
-            --accent-border: #bae6fd;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="OyiVolt membantu pengelola gedung memahami pemakaian energi, melihat anomali, dan menentukan tindakan dari satu dashboard." >
+  <title>OyiVolt — Pahami energi gedung Anda</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #fff;
+      --white: #fff;
+      --ink: #17171c;
+      --muted: #777780;
+      --line: #e8e7e4;
+      --soft: #f3f3f5;
+      --soft-2: #f8f7f6;
+      --orange: #f2673c;
+      --orange-soft: #fff0e9;
+      --dark: #101018;
+      --radius: 12px;
+      --content: 1160px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--paper); font-size: 15px; line-height: 1.55; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .container { width: min(var(--content), calc(100% - 48px)); margin-inline: auto; }
+    .eyebrow { margin: 0 0 14px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .eyebrow--orange { color: var(--orange); }
+    .section { padding: 92px 0; border-top: 1px solid var(--line); }
+    .section--soft { background: #f6f6f7; }
+    .section-heading { max-width: 420px; }
+    .section-heading h2, .split-copy h2 { margin: 0; font-size: clamp(2rem, 3.6vw, 3.1rem); font-weight: 520; line-height: 1.06; letter-spacing: -.055em; }
+    .section-heading p:not(.eyebrow) { margin: 17px 0 0; color: var(--muted); font-size: 14px; }
+    .split { display: grid; grid-template-columns: minmax(220px, .78fr) minmax(300px, 1.22fr); gap: clamp(40px, 8vw, 120px); align-items: start; }
+    .split-copy p { margin: 17px 0 0; max-width: 580px; color: var(--muted); }
+    .button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 9px; padding: 0 18px; border: 1px solid transparent; border-radius: 999px; font-size: 12px; font-weight: 700; transition: transform .2s ease, background .2s ease, border-color .2s ease; cursor: pointer; }
+    .button:hover { transform: translateY(-2px); }
+    .button--dark { color: #fff; background: var(--dark); }
+    .button--dark:hover { background: #34333e; }
+    .button--outline { border-color: #dcdbe0; background: transparent; }
+    .button--outline:hover { border-color: var(--ink); }
+    .button--white { color: var(--ink); background: #fff; }
+    .button--white:hover { background: #f1f0ee; }
+    .arrow { font-size: 15px; line-height: 1; }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-            background-color: var(--bg);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .site-header { position: relative; z-index: 5; background: rgba(255,255,255,.9); }
+    .nav { display: flex; height: 58px; align-items: center; justify-content: flex-start; gap: 16px; }
+    .wordmark-small { font-size: 13px; font-weight: 760; letter-spacing: -.07em; text-transform: uppercase; white-space: nowrap; }
+    .nav-links { display: flex; align-items: center; gap: 0; margin-left: 0; color: #64646d; font-size: 9px; white-space: nowrap; }
+    .nav-links a:not(.button) { letter-spacing: .1em; text-transform: uppercase; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { min-height: 28px; padding-inline: 13px; font-size: 9px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+    .nav > .nav-cta { margin-left: auto; }
 
-        .container {
-            width: 90%;
-            max-width: 780px;
-            padding: 2.5rem;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
+    .hero { padding: 86px 0 56px; text-align: center; }
+    .hero .eyebrow { margin-bottom: 13px; }
+    .hero h1 { margin: 0; font-size: clamp(3.8rem, 10vw, 7.5rem); line-height: .9; font-weight: 560; letter-spacing: -.09em; text-transform: uppercase; }
+    .hero-lede { max-width: 510px; margin: 24px auto 0; color: var(--muted); font-size: 14px; }
+    .hero-stats { display: grid; width: min(650px, 100%); grid-template-columns: repeat(3, 1fr); margin: 34px auto 0; border-block: 1px solid var(--line); }
+    .hero-stat { padding: 17px 12px 15px; }
+    .hero-stat + .hero-stat { border-left: 1px solid var(--line); }
+    .hero-stat strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: -.04em; }
+    .hero-stat span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px; margin-top: 25px; }
+    .hero-proof { margin: 14px 0 0; color: var(--muted); font-size: 10px; }
+    .hero-proof strong { color: var(--ink); font-weight: 650; }
+    .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 31px auto 0; }
+    .tag { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: #65656c; font-size: 9px; }
+    .tag:hover { border-color: #b8b7bc; color: var(--ink); }
 
-        .badge {
-            align-self: center;
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--accent);
-            background: var(--accent-bg);
-            border: 1px solid var(--accent-border);
-            padding: 0.35rem 0.85rem;
-            border-radius: 9999px;
-        }
+    .visual-band { position: relative; overflow: hidden; height: clamp(240px, 43vw, 500px); background: #4b4945; }
+    .visual-band img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 62% center; }
+    .visual-caption { display: flex; justify-content: space-between; gap: 20px; padding: 13px 0 0; color: var(--muted); font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
+    .visual-caption span:last-child { text-align: right; }
+    .partner { padding: 48px 0; border-bottom: 1px solid var(--line); }
+    .partner-row { display: grid; grid-template-columns: 1fr auto auto 1fr; gap: 28px; align-items: center; }
+    .partner-title { max-width: 230px; font-size: 17px; line-height: 1.2; letter-spacing: -.04em; }
+    .partner-title small { display: block; margin-bottom: 8px; color: var(--muted); font-size: 9px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+    .partner-name { padding: 10px 19px; border: 1px solid var(--line); border-radius: 9px; font-size: 20px; font-weight: 760; letter-spacing: -.06em; }
+    .partner-copy { justify-self: end; max-width: 300px; color: var(--muted); font-size: 11px; }
 
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-        }
+    .question-pills { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 26px; }
+    .question-pills a { padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; color: #676770; font-size: 10px; }
+    .question-pills a:hover { border-color: var(--orange); color: var(--orange); }
+    .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 44px; }
+    .feature-card { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.62); }
+    .feature-art { display: flex; height: 88px; align-items: center; justify-content: center; overflow: hidden; border-radius: 7px; background: #f5f5f6; }
+    .feature-card h3 { margin: 16px 0 5px; font-size: 13px; font-weight: 650; letter-spacing: -.02em; }
+    .feature-card p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .feature-number { display: block; margin-top: 14px; color: #97969e; font-size: 9px; }
+    .mini-lines { width: 66%; display: grid; gap: 7px; }
+    .mini-lines i { display: block; height: 3px; border-radius: 9px; background: #30303a; }
+    .mini-lines i:nth-child(2) { width: 78%; background: #b6b5bc; }
+    .mini-lines i:nth-child(3) { width: 54%; background: var(--orange); }
+    .mini-chart { width: 82%; height: 58px; }
+    .mini-heat { display: grid; width: 78%; height: 60px; grid-template-columns: repeat(4,1fr); gap: 3px; }
+    .mini-heat i { background: #f8b39c; }
+    .mini-heat i:nth-child(2n) { background: #f4d4c8; }
+    .mini-heat i:nth-child(5), .mini-heat i:nth-child(8) { background: #ef704d; }
+    .mini-bars { display: flex; width: 74%; height: 62px; align-items: end; gap: 4px; }
+    .mini-bars i { flex: 1; height: 35%; background: #282832; }
+    .mini-bars i:nth-child(2) { height: 51%; }
+    .mini-bars i:nth-child(3) { height: 77%; }
+    .mini-bars i:nth-child(4) { height: 95%; }
+    .mini-bars i:nth-child(5) { height: 61%; }
+    .mini-bars i:nth-child(6) { height: 45%; background: var(--orange); }
 
-        .subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            font-style: italic;
-            margin-top: 0.25rem;
-        }
+    .role-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 45px; }
+    .role { padding: 25px 22px; border-top: 2px solid #d9d9de; }
+    .role--featured { border: 1px solid var(--line); border-top: 2px solid var(--orange); border-radius: 9px; background: #fff; }
+    .role h3 { margin: 0; font-size: 14px; font-weight: 660; }
+    .role p { margin: 10px 0 0; color: var(--muted); font-size: 11px; }
 
-        .description {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
+    .flow-wrap { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: center; margin-top: 42px; }
+    .flow-map { position: relative; display: flex; align-items: center; justify-content: center; min-height: 180px; }
+    .flow-node { position: relative; z-index: 1; display: grid; width: 74px; height: 48px; place-items: center; border: 1px solid var(--line); border-radius: 11px; background: #fff; font-size: 10px; font-weight: 700; }
+    .flow-node--dark { color: #fff; background: var(--dark); }
+    .flow-node--chart { color: var(--orange); }
+    .flow-connector { width: 50px; border-top: 1px dashed #aaa9b2; }
+    .flow-caption { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 9px; white-space: nowrap; }
+    .flow-copy { color: var(--muted); font-size: 13px; }
+    .flow-copy strong { color: var(--ink); }
+    .flow-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; margin-top: 40px; border-block: 1px solid var(--line); }
+    .flow-step { padding: 14px 16px; color: #62626b; font-size: 10px; }
+    .flow-step + .flow-step { border-left: 1px solid var(--line); }
+    .flow-step b { display: block; margin-bottom: 5px; color: var(--ink); font-size: 10px; }
 
-        .departments {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 0.25rem;
-        }
+    .dashboard-shell { margin-top: 38px; padding: 16px; border: 1px solid #e6e5e6; border-radius: 13px; background: #fff; box-shadow: 0 12px 40px rgba(30,29,37,.04); }
+    .dashboard-top { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0 2px 14px; border-bottom: 1px solid #efeff1; }
+    .dashboard-brand { font-size: 10px; font-weight: 750; letter-spacing: -.04em; }
+    .dashboard-tabs { display: flex; gap: 6px; }
+    .dashboard-tabs span { padding: 6px 9px; border: 1px solid #eeeef0; border-radius: 999px; color: #6e6e77; font-size: 8px; }
+    .dashboard-tabs span:first-child { color: #fff; border-color: var(--dark); background: var(--dark); }
+    .dashboard-body { display: grid; grid-template-columns: 140px 1fr; min-height: 310px; }
+    .dashboard-side { padding: 18px 14px 0 4px; border-right: 1px solid #efeff1; }
+    .dashboard-side b { display: block; margin-bottom: 14px; font-size: 10px; }
+    .dashboard-side span { display: block; padding: 7px 8px; color: #8a8991; font-size: 8px; }
+    .dashboard-side span:first-of-type { color: var(--ink); border-radius: 4px; background: #f1f1f3; }
+    .dashboard-main { padding: 18px 5px 0 16px; }
+    .dashboard-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .dashboard-title-row strong { font-size: 14px; letter-spacing: -.03em; }
+    .dashboard-title-row small { color: var(--orange); font-size: 8px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .metric { padding: 11px; border: 1px solid #ecebef; border-radius: 6px; }
+    .metric span { display: block; color: #85848d; font-size: 8px; }
+    .metric strong { display: block; margin-top: 7px; font-size: 17px; font-weight: 580; letter-spacing: -.06em; }
+    .dashboard-chart-row { display: grid; grid-template-columns: 1.35fr .75fr; gap: 9px; margin-top: 9px; }
+    .chart-card, .phase-card { min-height: 132px; padding: 12px; border: 1px solid #ecebef; border-radius: 6px; }
+    .chart-card h4, .phase-card h4 { margin: 0; font-size: 9px; font-weight: 630; }
+    .chart-card svg { width: 100%; height: 94px; margin-top: 8px; }
+    .phase-row { display: flex; align-items: center; gap: 8px; margin-top: 11px; color: #76757f; font-size: 8px; }
+    .phase-row i { display: block; height: 5px; border-radius: 6px; background: #c7c5ca; }
+    .phase-row:nth-of-type(2) i { background: var(--orange); }
+    .dashboard-tiles { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; margin-top: 12px; }
+    .dashboard-tile { min-height: 66px; padding: 10px; border: 1px solid #ecebef; border-radius: 6px; color: #777780; font-size: 8px; }
+    .tile-art { display: flex; height: 26px; align-items: end; gap: 3px; margin-bottom: 7px; }
+    .tile-art i { flex: 1; height: 40%; background: #33323d; }
+    .tile-art i:nth-child(2n) { height: 80%; background: #f5a188; }
+    .dashboard-note { margin: 11px 0 0; color: #898891; font-size: 9px; }
+    .preview-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 24px; }
+    .preview-card { display: grid; grid-template-columns: 80px 1fr; gap: 13px; align-items: center; color: var(--muted); font-size: 10px; }
+    .preview-mini { display: grid; height: 58px; place-items: center; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .preview-card strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 10px; }
 
-        .dept-card {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.1rem 1rem;
-            text-align: left;
-        }
+    .outcome-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 30px; }
+    .outcome-card { min-height: 150px; padding: 17px; border: 1px solid #e7e6e8; border-radius: 7px; background: #fff; }
+    .outcome-card .step { display: block; margin-bottom: 19px; color: var(--orange); font-size: 9px; font-weight: 700; }
+    .outcome-card h3 { margin: 0; font-size: 12px; font-weight: 650; }
+    .outcome-card p { margin: 8px 0 0; color: var(--muted); font-size: 10px; }
 
-        .dept-card h3 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
+    .resource-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 13px; margin-top: 30px; }
+    .resource-card { min-height: 160px; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .resource-card--dark { color: #fff; border-color: var(--dark); background: var(--dark); }
+    .resource-card .eyebrow { margin-bottom: 15px; font-size: 8px; }
+    .resource-card h3 { margin: 0; font-size: 15px; line-height: 1.3; letter-spacing: -.03em; }
+    .resource-card p { margin: 8px 0 16px; color: var(--muted); font-size: 10px; }
+    .resource-card--dark p { color: #c0bfc8; }
+    .resource-card a { display: inline-flex; align-items: center; gap: 7px; color: var(--orange); font-size: 10px; font-weight: 700; }
+    .resource-card--dark a { color: #fff; }
 
-        .dept-card p {
-            font-size: 0.825rem;
-            color: var(--text-muted);
-        }
+    .faq-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 80px; align-items: start; }
+    .faq-list { border-top: 1px solid var(--line); }
+    .faq-list details { border-bottom: 1px solid var(--line); }
+    .faq-list summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 17px 0; list-style: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after { content: "+"; color: #92919a; font-size: 18px; font-weight: 400; }
+    .faq-list details[open] summary::after { content: "−"; }
+    .faq-list details p { max-width: 620px; margin: -3px 30px 18px 0; color: var(--muted); font-size: 11px; }
 
-        footer {
-            margin-top: 0.25rem;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border);
-            padding-top: 1rem;
-        }
+    .contact-scene { position: relative; overflow: hidden; padding: 68px 24px; background: #454039; }
+    .contact-scene > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .contact-scene::after { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, rgba(18,17,19,.08), rgba(18,17,19,.3)); pointer-events: none; }
+    .contact-card { position: relative; z-index: 1; width: min(420px, 100%); margin-inline: auto; padding: 27px; border: 1px solid rgba(255,255,255,.6); border-radius: 10px; background: rgba(255,255,255,.96); box-shadow: 0 18px 60px rgba(0,0,0,.2); }
+    .contact-card h2 { margin: 0; font-size: 23px; line-height: 1.1; letter-spacing: -.05em; }
+    .contact-card > p { margin: 8px 0 20px; color: var(--muted); font-size: 10px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .form-field { display: grid; gap: 5px; }
+    .form-field--full { grid-column: 1 / -1; }
+    .form-field label { color: #6f6e77; font-size: 9px; }
+    .form-field input, .form-field select { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid #e4e3e6; border-radius: 5px; color: var(--ink); background: #fff; font-size: 10px; }
+    .form-field input:focus, .form-field select:focus { outline: 2px solid rgba(242,103,60,.25); border-color: var(--orange); }
+    .form-submit { width: 100%; margin-top: 14px; }
+    .form-note { margin: 10px 0 0 !important; color: #8c8b93 !important; font-size: 9px !important; }
+    .form-status { min-height: 18px; margin: 9px 0 0; color: #326f50; font-size: 10px; }
 
-        @media (max-width: 640px) {
-            .container {
-                padding: 1.5rem;
-                gap: 1rem;
-            }
+    .footer { padding: 40px 0 18px; color: #fff; background: var(--dark); }
+    .footer-main { display: grid; grid-template-columns: 1.1fr 1fr 1.2fr 1fr; gap: 35px; padding-bottom: 38px; }
+    .footer-brand { font-size: 21px; font-weight: 750; letter-spacing: -.07em; }
+    .footer p, .footer a, .footer span { color: #aaa9b3; font-size: 9px; }
+    .footer h3 { margin: 0 0 13px; color: #fff; font-size: 10px; font-weight: 650; }
+    .footer-col { display: grid; align-content: start; gap: 9px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; border-top: 1px solid #2c2b34; }
+    .footer-bottom span { font-size: 8px; }
 
-            h1 {
-                font-size: 1.75rem;
-            }
-
-            .departments {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-        }
-    </style>
+    @media (max-width: 850px) {
+      .section { padding: 72px 0; }
+      .partner-row { grid-template-columns: 1fr auto auto; }
+      .partner-copy { grid-column: 1 / -1; justify-self: start; max-width: 500px; }
+      .feature-grid, .role-grid, .outcome-grid { grid-template-columns: repeat(2,1fr); }
+      .flow-wrap { grid-template-columns: 1fr; gap: 25px; }
+      .faq-layout { grid-template-columns: 1fr; gap: 28px; }
+      .footer-main { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 600px) {
+      .container { width: min(100% - 34px, var(--content)); }
+      .nav { height: 46px; gap: 10px; }
+      .nav-links { margin-left: 0; font-size: 8px; }
+      .nav-cta { display: inline-flex; min-height: 24px; padding-inline: 9px; font-size: 7px; }
+      .hero { padding: 68px 0 42px; }
+      .hero-lede { font-size: 13px; }
+      .hero-stats { margin-top: 27px; }
+      .hero-stat { padding-inline: 6px; }
+      .hero-stat strong { font-size: 15px; }
+      .hero-stat span { font-size: 8px; }
+      .hero-tags { margin-top: 24px; }
+      .section { padding: 60px 0; }
+      .split { grid-template-columns: 1fr; gap: 22px; }
+      .partner-row { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .partner-title { max-width: 200px; }
+      .partner-name { justify-self: start; }
+      .partner-copy { grid-column: 1 / -1; }
+      .feature-grid { gap: 9px; margin-top: 30px; }
+      .feature-card { padding: 10px; }
+      .feature-art { height: 72px; }
+      .role-grid { gap: 8px; margin-top: 28px; }
+      .role { padding: 17px 13px; }
+      .flow-map { min-height: 140px; }
+      .flow-node { width: 58px; height: 43px; font-size: 9px; }
+      .flow-connector { width: 24px; }
+      .flow-steps { grid-template-columns: repeat(2,1fr); }
+      .flow-step:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .flow-step:nth-child(4) { border-top: 1px solid var(--line); }
+      .dashboard-shell { padding: 9px; margin-inline: -5px; }
+      .dashboard-top { align-items: flex-start; }
+      .dashboard-tabs { flex-wrap: wrap; justify-content: end; }
+      .dashboard-tabs span { padding: 5px 7px; font-size: 7px; }
+      .dashboard-body { grid-template-columns: 78px 1fr; }
+      .dashboard-side { padding-right: 7px; }
+      .dashboard-side span { padding: 6px 4px; font-size: 7px; }
+      .dashboard-main { padding-left: 9px; }
+      .metric-grid { grid-template-columns: repeat(2,1fr); }
+      .metric { padding: 8px; }
+      .metric strong { font-size: 15px; }
+      .dashboard-chart-row { grid-template-columns: 1fr; }
+      .phase-card { min-height: auto; }
+      .dashboard-tiles { grid-template-columns: repeat(2,1fr); }
+      .preview-cards { grid-template-columns: 1fr; gap: 10px; }
+      .preview-card { grid-template-columns: 68px 1fr; }
+      .outcome-grid { gap: 8px; }
+      .outcome-card { min-height: 145px; padding: 13px; }
+      .resource-grid { grid-template-columns: 1fr; }
+      .resource-card { min-height: 130px; }
+      .contact-scene { padding: 48px 17px; }
+      .contact-card { padding: 20px; }
+      .footer-main { grid-template-columns: 1fr 1fr; gap: 25px 18px; }
+      .footer-bottom { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
 </head>
 <body>
-    <main class="container">
+  <header class="site-header">
+    <div class="container nav">
+      <a class="wordmark-small" href="#top" aria-label="OyiVolt, ke atas">OyiVolt</a>
+      <nav class="nav-links" id="nav-links" aria-label="Navigasi utama">
+        <a href="#tentang">Tentang Kami</a>
+      </nav>
+      <a class="button button--dark nav-cta" href="#demo">Jadwalkan demo</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero container" aria-labelledby="hero-title">
+      <p class="eyebrow">Energi gedung, terlihat jelas</p>
+      <h1 id="hero-title">OyiVolt</h1>
+      <p class="hero-lede">Pahami energi yang digunakan gedung Anda. Dari angka di tagihan menjadi pola yang bisa ditindaklanjuti.</p>
+      <div class="hero-stats" aria-label="Ringkasan kemampuan OyiVolt">
+        <div class="hero-stat"><strong>R · S · T</strong><span>Pemantauan per fase</span></div>
+        <div class="hero-stat"><strong>24 jam</strong><span>Data energi terpantau</span></div>
+        <div class="hero-stat"><strong>Per ruang</strong><span>Temukan titik pemakaian</span></div>
+      </div>
+      <div class="hero-actions">
+        <a class="button button--dark" href="#demo">Jadwalkan demo <span class="arrow">↗</span></a>
+        <a class="button button--outline" href="#cara-kerja">Lihat cara kerja</a>
+      </div>
+      <p class="hero-proof">Dikembangkan bersama <strong>PT ELPI</strong></p>
+      <div class="hero-tags" aria-label="Jelajahi halaman">
+        <a class="tag" href="#masalah">Dari tagihan ke pola</a>
+        <a class="tag" href="#fitur">Baca pemakaian per fase</a>
+        <a class="tag" href="#dashboard">Lihat dashboard</a>
+        <a class="tag" href="#demo">Tindak lanjuti anomali</a>
+      </div>
+    </section>
+
+    <section class="visual-section" aria-label="Panel distribusi energi gedung">
+      <div class="visual-band"><img src="assets/oyivolt-panel-v2.jpg" alt="Pemutus arus pada panel distribusi listrik gedung"></div>
+      <div class="container visual-caption"><span>Pengukuran energi gedung</span><span>Data untuk keputusan yang lebih jelas</span></div>
+    </section>
+
+    <section class="partner" id="tentang" aria-label="Mitra pengembangan">
+      <div class="container partner-row">
+        <div class="partner-title"><small>Teknologi bersama</small>Dikembangkan bersama PT ELPI.</div>
+        <div class="partner-name" aria-label="OyiVolt">OyiVolt</div>
+        <div class="partner-name" aria-label="ELPI">ELPi</div>
+        <p class="partner-copy">Pemantauan energi yang menghubungkan pengukuran di lapangan dengan informasi yang bisa digunakan tim gedung.</p>
+      </div>
+    </section>
+
+    <section class="section" id="masalah">
+      <div class="container split">
+        <div class="split-copy">
+          <p class="eyebrow">Dari angka ke konteks</p>
+          <h2>Tagihan hanya menunjukkan satu angka.</h2>
+        </div>
         <div>
-            <h1>Power Sense Project</h1>
-            <p class="subtitle">Developed by Electrical Engineering &amp; Information Technology, POLINEMA</p>
+          <p class="split-copy" style="color:var(--muted);margin:0">Tagihan listrik menunjukkan total pemakaian—tetapi belum tentu menjawab ruang mana yang memakai energi, kapan pemakaian terjadi, dan apakah ruangan itu sedang digunakan.</p>
+          <div class="question-pills">
+            <a href="#dashboard">Di mana?</a><a href="#dashboard">Kapan?</a><a href="#fitur">Dipakai atau tidak?</a>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <p class="description">
-            A collaborative research and development initiative uniting physical electrical infrastructure with modern cloud and IoT technologies to build intelligent, scalable, and data-driven solutions for sustainable campus energy management.
-        </p>
-
-        <div class="departments">
-            <div class="dept-card">
-                <h3>Jurusan Teknik Elektro (JTE)</h3>
-            </div>
-            <div class="dept-card">
-                <h3>Jurusan Teknologi Informasi (JTI)</h3>
-            </div>
+    <section class="section section--soft" id="fitur">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Pola penggunaan</p>
+          <h2>Lihat pola.<br>Temukan potensi.</h2>
+          <p>Informasi yang lebih terperinci membantu tim memeriksa pemakaian dan menentukan langkah berikutnya.</p>
         </div>
+        <div class="feature-grid">
+          <article class="feature-card"><div class="feature-art"><div class="mini-lines"><i></i><i></i><i></i></div></div><span class="feature-number">01</span><h3>Pemantauan per fase</h3><p>Bandingkan pemakaian tiap fase dan kenali perubahan yang perlu diperiksa.</p></article>
+          <article class="feature-card"><div class="feature-art"><svg class="mini-chart" viewBox="0 0 160 70" aria-hidden="true"><path d="M3 58 35 43 57 48 84 20 110 28 137 9 157 13" fill="none" stroke="#31313a" stroke-width="3"/><path d="M3 63h154" stroke="#dddce1"/></svg></div><span class="feature-number">02</span><h3>Tren &amp; perbandingan</h3><p>Lihat perubahan pemakaian dari waktu ke waktu dalam satu tampilan.</p></article>
+          <article class="feature-card"><div class="feature-art"><div class="mini-heat" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="feature-number">03</span><h3>Detail energi</h3><p>Telusuri pola berdasarkan area dan periode pemakaian yang relevan.</p></article>
+          <article class="feature-card"><div class="feature-art"><div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="feature-number">04</span><h3>Konsumsi per ruang</h3><p>Bandingkan area agar pemeriksaan dapat dimulai dari titik yang tepat.</p></article>
+        </div>
+      </div>
+    </section>
 
-        <footer>
-            Power Sense POLINEMA &bull; Empowering Smart and Sustainable Campus Energy Management
-        </footer>
-    </main>
+    <section class="section">
+      <div class="container">
+        <div class="section-heading"><p class="eyebrow">Satu sistem, beberapa peran</p><h2>Informasi yang bisa dipakai seluruh tim.</h2></div>
+        <div class="role-grid">
+          <article class="role role--featured"><h3>OyiVolt</h3><p>Memberi gambaran penggunaan energi gedung dalam satu dashboard.</p></article>
+          <article class="role"><h3>Pengelola fasilitas</h3><p>Memantau pemakaian dan mengarahkan pemeriksaan ke area yang relevan.</p></article>
+          <article class="role"><h3>Teknisi</h3><p>Menggunakan informasi pengukuran untuk membantu pemeriksaan lapangan.</p></article>
+          <article class="role"><h3>Pimpinan &amp; auditor</h3><p>Meninjau ringkasan pemakaian sebagai bagian dari evaluasi gedung.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--soft" id="cara-kerja">
+      <div class="container">
+        <div class="split">
+          <div class="split-copy"><p class="eyebrow">Cara kerja</p><h2>Dari titik ukur sampai keputusan.</h2></div>
+          <p class="flow-copy">Data dari panel diteruskan ke dashboard agar tim dapat melihat <strong>apa yang berubah, di mana perubahan terjadi, dan apa yang perlu diperiksa.</strong></p>
+        </div>
+        <div class="flow-wrap">
+          <div class="flow-map" aria-label="Alur dari meter ke dashboard">
+            <span class="flow-node">Meter</span><span class="flow-connector"></span><span class="flow-node flow-node--dark">OyiVolt</span><span class="flow-connector"></span><span class="flow-node flow-node--chart">Dashboard</span><span class="flow-caption">Pengukuran → konteks → tindakan</span>
+          </div>
+          <p class="flow-copy">OyiVolt membantu menyatukan pembacaan energi dan informasi operasional. Tim dapat meninjau pola lebih dulu, lalu memutuskan pemeriksaan yang sesuai dengan kondisi gedung.</p>
+        </div>
+        <div class="flow-steps"><div class="flow-step"><b>01 · Meter &amp; dipasang</b>Pengukuran dimulai dari titik yang dipilih.</div><div class="flow-step"><b>02 · Pengumpulan</b>Data pemakaian dikirim untuk ditinjau.</div><div class="flow-step"><b>03 · Pengolahan</b>Pola disajikan dalam bentuk yang mudah dibaca.</div><div class="flow-step"><b>04 · Tindak lanjut</b>Tim menentukan apa yang perlu diperiksa.</div></div>
+      </div>
+    </section>
+
+    <section class="section" id="dashboard">
+      <div class="container">
+        <div class="split">
+          <div class="split-copy"><p class="eyebrow">Pratinjau produk</p><h2>Pratinjau dashboard.</h2></div>
+          <p class="flow-copy">Satu ringkasan untuk melihat konsumsi, membandingkan fase, dan menemukan area yang perlu diperiksa lebih lanjut.</p>
+        </div>
+        <div class="dashboard-shell" aria-label="Contoh tampilan dashboard OyiVolt">
+          <div class="dashboard-top"><span class="dashboard-brand">OyiVolt</span><div class="dashboard-tabs"><span>Dashboard</span><span>Data energi</span><span>Analisis</span><span>Periode</span></div><span class="dashboard-brand">⌕</span></div>
+          <div class="dashboard-body">
+            <aside class="dashboard-side"><b>OyiVolt</b><span>Dashboard</span><span>Data meter</span><span>Analisis energi</span><span>Pengguna</span><span>Pengaturan</span></aside>
+            <div class="dashboard-main">
+              <div class="dashboard-title-row"><strong>Dashboard</strong><small>● DATA CONTOH</small></div>
+              <div class="metric-grid"><div class="metric"><span>Konsumsi saat ini</span><strong>96,7 kW</strong></div><div class="metric"><span>Energi hari ini</span><strong>1.284 kWh</strong></div><div class="metric"><span>Meter aktif</span><strong>18 / 32</strong></div><div class="metric"><span>Fase terpantau</span><strong>4 / 4</strong></div></div>
+              <div class="dashboard-chart-row">
+                <div class="chart-card"><h4>Tren penggunaan energi</h4><svg viewBox="0 0 600 160" role="img" aria-label="Grafik ilustratif tren penggunaan energi"><path d="M0 132h600M0 94h600M0 56h600M0 18h600" stroke="#eeeef0"/><path d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22" fill="none" stroke="#74747d" stroke-width="3"/><path d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22 L590 150H10Z" fill="#f4f4f5" opacity=".75"/></svg></div>
+                <div class="phase-card"><h4>Penggunaan per fase</h4><div class="phase-row">R <i style="width:72%"></i> 72%</div><div class="phase-row">S <i style="width:57%"></i> 57%</div><div class="phase-row">T <i style="width:83%"></i> 83%</div><div class="phase-row">N <i style="width:42%"></i> 42%</div></div>
+              </div>
+              <div class="dashboard-tiles"><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Perbandingan fase</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Ringkasan harian</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Pola area</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Tren pemakaian</div></div>
+            </div>
+          </div>
+          <p class="dashboard-note">Angka dan grafik di atas hanya contoh untuk menggambarkan tampilan produk.</p>
+        </div>
+        <div class="preview-cards"><div class="preview-card"><div class="preview-mini"><svg width="58" height="35" viewBox="0 0 58 35" aria-hidden="true"><path d="M2 29h54M3 24 13 20 20 22 30 11 39 15 49 6 56 8" fill="none" stroke="#55545e" stroke-width="2"/></svg></div><div><strong>Dashboard</strong>Ringkasan pemakaian untuk pemantauan awal.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-bars" style="width:55%;height:38px"><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Grafik konsumsi</strong>Bandingkan tren dalam periode pilihan.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-heat" style="width:56%;height:36px"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Detail energi</strong>Telusuri pemakaian berdasarkan area.</div></div></div>
+      </div>
+    </section>
+
+    <section class="section section--soft">
+      <div class="container split">
+        <div class="split-copy"><p class="eyebrow eyebrow--orange">Dari data ke tindakan</p><h2>Dari tagihan naik ke area yang perlu diperiksa.</h2></div>
+        <p class="flow-copy">Gunakan informasi pemakaian sebagai titik awal untuk memeriksa perubahan pola dan menentukan tindak lanjut bersama tim gedung.</p>
+      </div>
+      <div class="container outcome-grid">
+        <article class="outcome-card"><span class="step">01 · MASALAH AWAL</span><h3>Tagihan naik</h3><p>Tim melihat kenaikan biaya, tetapi belum mengetahui penyebabnya.</p></article>
+        <article class="outcome-card"><span class="step">02 · YANG DIPETAKAN</span><h3>Titik penggunaan</h3><p>Pemakaian ditinjau berdasarkan fase, meter, dan area.</p></article>
+        <article class="outcome-card"><span class="step">03 · YANG TERLIHAT</span><h3>Pola pemakaian</h3><p>Perubahan waktu dan beban dapat dibandingkan dengan pola sebelumnya.</p></article>
+        <article class="outcome-card"><span class="step">04 · TINDAK LANJUT</span><h3>Pemeriksaan terarah</h3><p>Tim dapat menentukan area yang perlu ditinjau di lapangan.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="split">
+          <div class="split-copy"><p class="eyebrow">Panduan energi gedung</p><h2>Memahami energi gedung.</h2></div>
+          <p class="flow-copy">Kenali istilah dan pertanyaan dasar untuk membantu tim membaca penggunaan energi dengan lebih terarah.</p>
+        </div>
+        <div class="resource-grid">
+          <article class="resource-card resource-card--dark"><p class="eyebrow">Panduan praktis</p><h3>Checklist Pemantauan Energi Gedung</h3><p>Mulai dengan daftar pemeriksaan yang dapat disesuaikan dengan kondisi gedung.</p><a href="#demo">Minta checklist <span class="arrow">↗</span></a></article>
+          <article class="resource-card"><p class="eyebrow">Dasar pengukuran</p><h3>Apa yang tidak terlihat dari total tagihan energi?</h3><p>Kenali perbedaan angka total dan pola pemakaian.</p><a href="#faq">Lihat panduan <span class="arrow">↗</span></a></article>
+          <article class="resource-card"><p class="eyebrow">Istilah energi</p><h3>Cara membaca fase dan konsumsi gedung</h3><p>Ringkasan sederhana untuk memulai percakapan di tim fasilitas.</p><a href="#cara-kerja">Pelajari alurnya <span class="arrow">↗</span></a></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--soft" id="faq">
+      <div class="container faq-layout">
+        <div class="section-heading"><p class="eyebrow">FAQ</p><h2>Pertanyaan yang sering muncul.</h2></div>
+        <div class="faq-list">
+          <details><summary>Perangkat apa yang dibutuhkan?</summary><p>Konfigurasi mengikuti panel dan titik ukur yang ingin dipantau. Tim perlu meninjau kondisi lokasi sebelum menentukan perangkat yang sesuai.</p></details>
+          <details><summary>Bagaimana instalasi dilakukan?</summary><p>Ruang lingkup pemasangan ditentukan setelah survei dan pembahasan kebutuhan gedung. Jadwalkan demo untuk mendiskusikan prosesnya.</p></details>
+          <details><summary>Data apa yang dibutuhkan?</summary><p>Mulai dari informasi dasar gedung, titik meter, dan periode tagihan yang tersedia. Kebutuhan rinci dapat berbeda untuk setiap lokasi.</p></details>
+          <details><summary>Bagaimana privasi data dijaga?</summary><p>Akses dan pengelolaan data perlu disepakati dalam proses implementasi. Hubungi tim OyiVolt untuk membahas kebutuhan keamanan dan kebijakan yang berlaku.</p></details>
+          <details><summary>Bagaimana cara mengatur demo?</summary><p>Isi formulir demo di bawah. Formulir pada berkas ini masih berupa prototipe tampilan dan belum mengirim data ke server.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-scene" id="demo" aria-labelledby="demo-title">
+      <img src="assets/oyivolt-demo-v2.jpg" alt="" aria-hidden="true">
+      <form class="contact-card" id="demo-form">
+        <p class="eyebrow eyebrow--orange">Mulai percakapan</p>
+        <h2 id="demo-title">Jadwalkan demo OyiVolt.</h2>
+        <p>Ceritakan sedikit tentang gedung Anda agar kebutuhan demo bisa dibahas.</p>
+        <div class="form-grid">
+          <div class="form-field"><label for="name">Nama</label><input id="name" name="name" autocomplete="name" required placeholder="Nama Anda"></div>
+          <div class="form-field"><label for="email">Email kerja</label><input id="email" name="email" type="email" autocomplete="email" required placeholder="nama@perusahaan.com"></div>
+          <div class="form-field"><label for="building">Nama gedung</label><input id="building" name="building" required placeholder="Nama gedung"></div>
+          <div class="form-field"><label for="meters">Jumlah titik meter</label><select id="meters" name="meters"><option value="">Pilih perkiraan</option><option>1–10 titik</option><option>11–30 titik</option><option>Lebih dari 30 titik</option><option>Belum diketahui</option></select></div>
+          <div class="form-field form-field--full"><button class="button button--dark form-submit" type="submit">Siapkan permintaan demo <span class="arrow">↗</span></button></div>
+        </div>
+        <p class="form-note">Prototipe front-end: formulir ini belum mengirim data ke server.</p>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-main">
+        <div><a class="footer-brand" href="#top">OyiVolt</a><p>Memahami energi gedung<br>dari data yang lebih terarah.</p></div>
+        <div class="footer-col"><h3>Jelajahi</h3><a href="#cara-kerja">Cara kerja</a><a href="#fitur">Fitur</a><a href="#dashboard">Pratinjau dashboard</a></div>
+        <div class="footer-col"><h3>Untuk tim gedung</h3><a href="#masalah">Pemantauan energi</a><a href="#faq">Pertanyaan umum</a><a href="#demo">Jadwalkan demo</a></div>
+        <div class="footer-col"><h3>Dikembangkan bersama</h3><span>PT ELPI</span><span>OyiVolt Energy Monitoring</span></div>
+      </div>
+      <div class="footer-bottom"><span>© <span id="year">2026</span> OyiVolt. Semua hak dilindungi.</span><span>Informasi produk pada halaman ini merupakan pratinjau.</span></div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelector('#demo-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      document.querySelector('#form-status').textContent = 'Tampilan formulir berfungsi. Sambungkan endpoint untuk menerima permintaan demo.';
+    });
+    document.querySelector('#year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
