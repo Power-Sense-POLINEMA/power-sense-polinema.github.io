@@ -38,6 +38,9 @@
     .js .reveal.is-visible { opacity: 1; transform: none; clip-path: inset(0); }
     .js [data-reveal-stagger] > .reveal { transition-delay: var(--reveal-delay, 0ms); }
     .js .reveal.is-visible.is-tilting { transform: perspective(950px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translate3d(0, -5px, 20px); transition: transform .14s ease-out, opacity .5s ease; }
+    .js .feature-card.is-tilting, .js .role.is-tilting, .js .outcome-card.is-tilting, .js .resource-card.is-tilting { background-image: radial-gradient(220px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(242,103,60,.13), transparent 72%); border-color: rgba(242,103,60,.45); box-shadow: 0 20px 46px rgba(24,23,31,.12); }
+    .js .resource-card--dark.is-tilting { background-image: radial-gradient(240px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255,255,255,.2), transparent 72%); }
+    .js .dashboard-shell.is-tilting { box-shadow: 0 26px 64px rgba(24,23,31,.15); }
     .js [data-scroll-parallax] { translate: 0 var(--scroll-parallax-y, 0px); will-change: translate; }
     a { color: inherit; text-decoration: none; }
     button, input, select { font: inherit; }
@@ -172,6 +175,10 @@
     .chart-card, .phase-card { min-height: 132px; padding: 12px; border: 1px solid #ecebef; border-radius: 6px; }
     .chart-card h4, .phase-card h4 { margin: 0; font-size: 9px; font-weight: 630; }
     .chart-card svg { width: 100%; height: 94px; margin-top: 8px; }
+    @media (prefers-reduced-motion: no-preference) {
+      .js .chart-card .chart-line { stroke-dasharray: 1100; stroke-dashoffset: 1100; }
+      .js .dashboard-shell.is-visible .chart-card .chart-line { stroke-dashoffset: 0; transition: stroke-dashoffset 1.7s cubic-bezier(.2,.7,.1,1) .25s; }
+    }
     .phase-row { display: flex; align-items: center; gap: 8px; margin-top: 11px; color: #76757f; font-size: 8px; }
     .phase-row i { display: block; height: 5px; border-radius: 6px; background: #c7c5ca; }
     .phase-row:nth-of-type(2) i { background: var(--orange); }
@@ -430,9 +437,9 @@
             <aside class="dashboard-side"><b>OyiVolt</b><span>Dashboard</span><span>Data meter</span><span>Analisis energi</span><span>Pengguna</span><span>Pengaturan</span></aside>
             <div class="dashboard-main">
               <div class="dashboard-title-row"><strong>Dashboard</strong><small>● DATA CONTOH</small></div>
-              <div class="metric-grid"><div class="metric"><span>Konsumsi saat ini</span><strong>96,7 kW</strong></div><div class="metric"><span>Energi hari ini</span><strong>1.284 kWh</strong></div><div class="metric"><span>Meter aktif</span><strong>18 / 32</strong></div><div class="metric"><span>Fase terpantau</span><strong>4 / 4</strong></div></div>
+              <div class="metric-grid"><div class="metric"><span>Konsumsi saat ini</span><strong data-count-up="96.7" data-count-decimals="1" data-count-suffix=" kW">96,7 kW</strong></div><div class="metric"><span>Energi hari ini</span><strong data-count-up="1284" data-count-suffix=" kWh">1.284 kWh</strong></div><div class="metric"><span>Meter aktif</span><strong data-count-up="18" data-count-suffix=" / 32">18 / 32</strong></div><div class="metric"><span>Fase terpantau</span><strong data-count-up="4" data-count-suffix=" / 4">4 / 4</strong></div></div>
               <div class="dashboard-chart-row">
-                <div class="chart-card"><h4>Tren penggunaan energi</h4><svg viewBox="0 0 600 160" role="img" aria-label="Grafik ilustratif tren penggunaan energi"><path d="M0 132h600M0 94h600M0 56h600M0 18h600" stroke="#eeeef0"/><path d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22" fill="none" stroke="#74747d" stroke-width="3"/><path d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22 L590 150H10Z" fill="#f4f4f5" opacity=".75"/></svg></div>
+                <div class="chart-card"><h4>Tren penggunaan energi</h4><svg viewBox="0 0 600 160" role="img" aria-label="Grafik ilustratif tren penggunaan energi"><path d="M0 132h600M0 94h600M0 56h600M0 18h600" stroke="#eeeef0"/><path class="chart-line" d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22" fill="none" stroke="#74747d" stroke-width="3"/><path d="M10 115 C70 111 78 85 125 91 S190 107 232 70 S292 45 322 60 S380 83 417 52 S473 29 510 50 S560 70 590 22 L590 150H10Z" fill="#f4f4f5" opacity=".75"/></svg></div>
                 <div class="phase-card"><h4>Penggunaan per fase</h4><div class="phase-row">R <i style="width:72%"></i> 72%</div><div class="phase-row">S <i style="width:57%"></i> 57%</div><div class="phase-row">T <i style="width:83%"></i> 83%</div><div class="phase-row">N <i style="width:42%"></i> 42%</div></div>
               </div>
               <div class="dashboard-tiles"><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Perbandingan fase</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Ringkasan harian</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Pola area</div><div class="dashboard-tile"><div class="tile-art"><i></i><i></i><i></i><i></i><i></i></div>Tren pemakaian</div></div>
@@ -526,6 +533,28 @@
     });
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dashboardCounts = Array.from(document.querySelectorAll('[data-count-up]'));
+    let dashboardCountsStarted = false;
+    const animateDashboardCounts = () => {
+      if (dashboardCountsStarted) return;
+      dashboardCountsStarted = true;
+      dashboardCounts.forEach((element) => {
+        const target = Number(element.dataset.countUp);
+        const decimals = Number(element.dataset.countDecimals || 0);
+        const suffix = element.dataset.countSuffix || '';
+        const formatter = new Intl.NumberFormat('id-ID', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        const startedAt = performance.now();
+        const duration = 1350;
+        element.textContent = `${formatter.format(0)}${suffix}`;
+        const step = (now) => {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = `${formatter.format(target * eased)}${suffix}`;
+          if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+      });
+    };
     revealTargets.forEach((target) => target.classList.add('reveal'));
     if (prefersReducedMotion || !('IntersectionObserver' in window)) {
       revealTargets.forEach((target) => target.classList.add('is-visible'));
@@ -534,6 +563,7 @@
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
+            if (entry.target.matches('.dashboard-shell')) animateDashboardCounts();
             observer.unobserve(entry.target);
           }
         });
@@ -588,12 +618,16 @@
           const x = (event.clientX - bounds.left) / bounds.width;
           const y = (event.clientY - bounds.top) / bounds.height;
           const strength = card.matches('.dashboard-shell') ? 3.5 : 8;
+          card.style.setProperty('--pointer-x', `${(x * 100).toFixed(1)}%`);
+          card.style.setProperty('--pointer-y', `${(y * 100).toFixed(1)}%`);
           card.style.setProperty('--tilt-x', `${((.5 - y) * strength).toFixed(2)}deg`);
           card.style.setProperty('--tilt-y', `${((x - .5) * strength * 1.25).toFixed(2)}deg`);
           card.classList.add('is-tilting');
         });
         card.addEventListener('pointerleave', () => {
           card.classList.remove('is-tilting');
+          card.style.removeProperty('--pointer-x');
+          card.style.removeProperty('--pointer-y');
           card.style.removeProperty('--tilt-x');
           card.style.removeProperty('--tilt-y');
         });
