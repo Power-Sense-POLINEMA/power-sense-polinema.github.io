@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#ffffff">
   <meta name="description" content="OyiVolt membantu pengelola gedung memahami pemakaian energi, melihat anomali, dan menentukan tindakan dari satu dashboard." >
   <title>OyiVolt — Pahami energi gedung Anda</title>
+  <script>document.documentElement.classList.add('js');</script>
   <style>
     :root {
       color-scheme: light;
@@ -29,6 +30,15 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; color: var(--ink); background: var(--paper); font-size: 15px; line-height: 1.55; }
+    .scroll-progress { position: fixed; z-index: 20; top: 0; left: 0; width: 100%; height: 2px; background: var(--orange); transform: scaleX(0); transform-origin: left center; pointer-events: none; }
+    .js .reveal { opacity: 0; transform: perspective(1100px) translate3d(0, 58px, -70px) rotateX(10deg) scale(.95); transform-origin: 50% 100%; backface-visibility: hidden; transition: opacity .85s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1); }
+    .js .reveal[data-reveal="left"] { transform: perspective(1100px) translate3d(-70px, 0, -55px) rotateY(12deg) rotateX(3deg) scale(.96); }
+    .js .reveal[data-reveal="zoom"] { transform: perspective(900px) translate3d(0, 26px, -180px) rotateX(9deg) scale(.84); }
+    .js .reveal[data-reveal="image"] { overflow: hidden; clip-path: inset(0 0 20% 0); transform: perspective(1000px) rotateX(12deg) scale(.93); transform-origin: 50% 50%; }
+    .js .reveal.is-visible { opacity: 1; transform: none; clip-path: inset(0); }
+    .js [data-reveal-stagger] > .reveal { transition-delay: var(--reveal-delay, 0ms); }
+    .js .reveal.is-visible.is-tilting { transform: perspective(950px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translate3d(0, -5px, 20px); transition: transform .14s ease-out, opacity .5s ease; }
+    .js [data-scroll-parallax] { translate: 0 var(--scroll-parallax-y, 0px); will-change: translate; }
     a { color: inherit; text-decoration: none; }
     button, input, select { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
@@ -76,9 +86,14 @@
     .hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 31px auto 0; }
     .tag { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: #65656c; font-size: 9px; }
     .tag:hover { border-color: #b8b7bc; color: var(--ink); }
+    .feature-card, .role, .outcome-card, .resource-card, .preview-card, .dashboard-shell { transform-style: preserve-3d; backface-visibility: hidden; transition: transform .35s cubic-bezier(.22,.68,0,1), box-shadow .35s ease, border-color .25s ease; }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .feature-card:hover, .role:hover, .outcome-card:hover, .resource-card:hover, .preview-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(24,23,31,.08); }
+      .feature-card:hover, .outcome-card:hover, .resource-card:hover { border-color: #d1cfd5; }
+    }
 
     .visual-band { position: relative; overflow: hidden; height: clamp(240px, 43vw, 500px); background: #4b4945; }
-    .visual-band img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 62% center; }
+    .visual-band img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 62% center; transform: translate3d(0,var(--parallax-y,0px),0) scale(1.22); will-change: transform; }
     .visual-caption { display: flex; justify-content: space-between; gap: 20px; padding: 13px 0 0; color: var(--muted); font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
     .visual-caption span:last-child { text-align: right; }
     .partner { padding: 48px 0; border-bottom: 1px solid var(--line); }
@@ -197,7 +212,7 @@
     .faq-list details p { max-width: 620px; margin: -3px 30px 18px 0; color: var(--muted); font-size: 11px; }
 
     .contact-scene { position: relative; overflow: hidden; padding: 68px 24px; background: #454039; }
-    .contact-scene > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .contact-scene > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transform: translate3d(0,var(--parallax-y,0px),0) scale(1.22); will-change: transform; }
     .contact-scene::after { position: absolute; inset: 0; content: ""; background: linear-gradient(90deg, rgba(18,17,19,.08), rgba(18,17,19,.3)); pointer-events: none; }
     .contact-card { position: relative; z-index: 1; width: min(420px, 100%); margin-inline: auto; padding: 27px; border: 1px solid rgba(255,255,255,.6); border-radius: 10px; background: rgba(255,255,255,.96); box-shadow: 0 18px 60px rgba(0,0,0,.2); }
     .contact-card h2 { margin: 0; font-size: 23px; line-height: 1.1; letter-spacing: -.05em; }
@@ -288,10 +303,15 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+      .scroll-progress { display: none; }
+      .js .reveal { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+      .js [data-scroll-parallax] { translate: none !important; will-change: auto; }
+      .visual-band img, .contact-scene > img { transform: none !important; will-change: auto; }
     }
   </style>
 </head>
 <body>
+  <div class="scroll-progress" aria-hidden="true"></div>
   <header class="site-header">
     <div class="container nav">
       <a class="wordmark-small" href="#top" aria-label="OyiVolt, ke atas">OyiVolt</a>
@@ -303,7 +323,7 @@
   </header>
 
   <main id="top">
-    <section class="hero container" aria-labelledby="hero-title">
+    <section class="hero container" aria-labelledby="hero-title" data-reveal="up" data-scroll-parallax="0.045">
       <p class="eyebrow">Energi gedung, terlihat jelas</p>
       <h1 id="hero-title">OyiVolt</h1>
       <p class="hero-lede">Pahami energi yang digunakan gedung Anda. Dari angka di tagihan menjadi pola yang bisa ditindaklanjuti.</p>
@@ -326,12 +346,12 @@
     </section>
 
     <section class="visual-section" aria-label="Panel distribusi energi gedung">
-      <div class="visual-band"><img src="assets/oyivolt-panel-v2.jpg" alt="Pemutus arus pada panel distribusi listrik gedung"></div>
-      <div class="container visual-caption"><span>Pengukuran energi gedung</span><span>Data untuk keputusan yang lebih jelas</span></div>
+      <div class="visual-band reveal" data-reveal="image"><img src="assets/oyivolt-panel-v2.jpg" data-parallax alt="Pemutus arus pada panel distribusi listrik gedung"></div>
+      <div class="container visual-caption" data-reveal="up"><span>Pengukuran energi gedung</span><span>Data untuk keputusan yang lebih jelas</span></div>
     </section>
 
     <section class="partner" id="tentang" aria-label="Mitra pengembangan">
-      <div class="container partner-row">
+      <div class="container partner-row" data-reveal="left" data-scroll-parallax="0.035">
         <div class="partner-title"><small>Teknologi bersama</small>Dikembangkan bersama PT ELPI.</div>
         <div class="partner-name" aria-label="OyiVolt">OyiVolt</div>
         <div class="partner-name" aria-label="ELPI">ELPi</div>
@@ -340,7 +360,7 @@
     </section>
 
     <section class="section" id="masalah">
-      <div class="container split">
+      <div class="container split" data-reveal="up">
         <div class="split-copy">
           <p class="eyebrow">Dari angka ke konteks</p>
           <h2>Tagihan hanya menunjukkan satu angka.</h2>
@@ -356,12 +376,12 @@
 
     <section class="section section--soft" id="fitur">
       <div class="container">
-        <div class="section-heading">
+        <div class="section-heading" data-reveal="up">
           <p class="eyebrow">Pola penggunaan</p>
           <h2>Lihat pola.<br>Temukan potensi.</h2>
           <p>Informasi yang lebih terperinci membantu tim memeriksa pemakaian dan menentukan langkah berikutnya.</p>
         </div>
-        <div class="feature-grid">
+        <div class="feature-grid" data-reveal-stagger>
           <article class="feature-card"><div class="feature-art"><div class="mini-lines"><i></i><i></i><i></i></div></div><span class="feature-number">01</span><h3>Pemantauan per fase</h3><p>Bandingkan pemakaian tiap fase dan kenali perubahan yang perlu diperiksa.</p></article>
           <article class="feature-card"><div class="feature-art"><svg class="mini-chart" viewBox="0 0 160 70" aria-hidden="true"><path d="M3 58 35 43 57 48 84 20 110 28 137 9 157 13" fill="none" stroke="#31313a" stroke-width="3"/><path d="M3 63h154" stroke="#dddce1"/></svg></div><span class="feature-number">02</span><h3>Tren &amp; perbandingan</h3><p>Lihat perubahan pemakaian dari waktu ke waktu dalam satu tampilan.</p></article>
           <article class="feature-card"><div class="feature-art"><div class="mini-heat" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><span class="feature-number">03</span><h3>Detail energi</h3><p>Telusuri pola berdasarkan area dan periode pemakaian yang relevan.</p></article>
@@ -372,8 +392,8 @@
 
     <section class="section">
       <div class="container">
-        <div class="section-heading"><p class="eyebrow">Satu sistem, beberapa peran</p><h2>Informasi yang bisa dipakai seluruh tim.</h2></div>
-        <div class="role-grid">
+        <div class="section-heading" data-reveal="up"><p class="eyebrow">Satu sistem, beberapa peran</p><h2>Informasi yang bisa dipakai seluruh tim.</h2></div>
+        <div class="role-grid" data-reveal-stagger>
           <article class="role role--featured"><h3>OyiVolt</h3><p>Memberi gambaran penggunaan energi gedung dalam satu dashboard.</p></article>
           <article class="role"><h3>Pengelola fasilitas</h3><p>Memantau pemakaian dan mengarahkan pemeriksaan ke area yang relevan.</p></article>
           <article class="role"><h3>Teknisi</h3><p>Menggunakan informasi pengukuran untuk membantu pemeriksaan lapangan.</p></article>
@@ -384,27 +404,27 @@
 
     <section class="section section--soft" id="cara-kerja">
       <div class="container">
-        <div class="split">
+        <div class="split" data-reveal="up">
           <div class="split-copy"><p class="eyebrow">Cara kerja</p><h2>Dari titik ukur sampai keputusan.</h2></div>
           <p class="flow-copy">Data dari panel diteruskan ke dashboard agar tim dapat melihat <strong>apa yang berubah, di mana perubahan terjadi, dan apa yang perlu diperiksa.</strong></p>
         </div>
-        <div class="flow-wrap">
+        <div class="flow-wrap" data-reveal="zoom">
           <div class="flow-map" aria-label="Alur dari meter ke dashboard">
             <span class="flow-node">Meter</span><span class="flow-connector"></span><span class="flow-node flow-node--dark">OyiVolt</span><span class="flow-connector"></span><span class="flow-node flow-node--chart">Dashboard</span><span class="flow-caption">Pengukuran → konteks → tindakan</span>
           </div>
           <p class="flow-copy">OyiVolt membantu menyatukan pembacaan energi dan informasi operasional. Tim dapat meninjau pola lebih dulu, lalu memutuskan pemeriksaan yang sesuai dengan kondisi gedung.</p>
         </div>
-        <div class="flow-steps"><div class="flow-step"><b>01 · Meter &amp; dipasang</b>Pengukuran dimulai dari titik yang dipilih.</div><div class="flow-step"><b>02 · Pengumpulan</b>Data pemakaian dikirim untuk ditinjau.</div><div class="flow-step"><b>03 · Pengolahan</b>Pola disajikan dalam bentuk yang mudah dibaca.</div><div class="flow-step"><b>04 · Tindak lanjut</b>Tim menentukan apa yang perlu diperiksa.</div></div>
+        <div class="flow-steps" data-reveal-stagger><div class="flow-step"><b>01 · Meter &amp; dipasang</b>Pengukuran dimulai dari titik yang dipilih.</div><div class="flow-step"><b>02 · Pengumpulan</b>Data pemakaian dikirim untuk ditinjau.</div><div class="flow-step"><b>03 · Pengolahan</b>Pola disajikan dalam bentuk yang mudah dibaca.</div><div class="flow-step"><b>04 · Tindak lanjut</b>Tim menentukan apa yang perlu diperiksa.</div></div>
       </div>
     </section>
 
     <section class="section" id="dashboard">
       <div class="container">
-        <div class="split">
+        <div class="split" data-reveal="up">
           <div class="split-copy"><p class="eyebrow">Pratinjau produk</p><h2>Pratinjau dashboard.</h2></div>
           <p class="flow-copy">Satu ringkasan untuk melihat konsumsi, membandingkan fase, dan menemukan area yang perlu diperiksa lebih lanjut.</p>
         </div>
-        <div class="dashboard-shell" aria-label="Contoh tampilan dashboard OyiVolt">
+        <div class="dashboard-shell" aria-label="Contoh tampilan dashboard OyiVolt" data-reveal="zoom" data-scroll-parallax="0.055">
           <div class="dashboard-top"><span class="dashboard-brand">OyiVolt</span><div class="dashboard-tabs"><span>Dashboard</span><span>Data energi</span><span>Analisis</span><span>Periode</span></div><span class="dashboard-brand">⌕</span></div>
           <div class="dashboard-body">
             <aside class="dashboard-side"><b>OyiVolt</b><span>Dashboard</span><span>Data meter</span><span>Analisis energi</span><span>Pengguna</span><span>Pengaturan</span></aside>
@@ -420,16 +440,16 @@
           </div>
           <p class="dashboard-note">Angka dan grafik di atas hanya contoh untuk menggambarkan tampilan produk.</p>
         </div>
-        <div class="preview-cards"><div class="preview-card"><div class="preview-mini"><svg width="58" height="35" viewBox="0 0 58 35" aria-hidden="true"><path d="M2 29h54M3 24 13 20 20 22 30 11 39 15 49 6 56 8" fill="none" stroke="#55545e" stroke-width="2"/></svg></div><div><strong>Dashboard</strong>Ringkasan pemakaian untuk pemantauan awal.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-bars" style="width:55%;height:38px"><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Grafik konsumsi</strong>Bandingkan tren dalam periode pilihan.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-heat" style="width:56%;height:36px"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Detail energi</strong>Telusuri pemakaian berdasarkan area.</div></div></div>
+        <div class="preview-cards" data-reveal-stagger><div class="preview-card"><div class="preview-mini"><svg width="58" height="35" viewBox="0 0 58 35" aria-hidden="true"><path d="M2 29h54M3 24 13 20 20 22 30 11 39 15 49 6 56 8" fill="none" stroke="#55545e" stroke-width="2"/></svg></div><div><strong>Dashboard</strong>Ringkasan pemakaian untuk pemantauan awal.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-bars" style="width:55%;height:38px"><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Grafik konsumsi</strong>Bandingkan tren dalam periode pilihan.</div></div><div class="preview-card"><div class="preview-mini"><div class="mini-heat" style="width:56%;height:36px"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div><strong>Detail energi</strong>Telusuri pemakaian berdasarkan area.</div></div></div>
       </div>
     </section>
 
     <section class="section section--soft">
-      <div class="container split">
+      <div class="container split" data-reveal="up">
         <div class="split-copy"><p class="eyebrow eyebrow--orange">Dari data ke tindakan</p><h2>Dari tagihan naik ke area yang perlu diperiksa.</h2></div>
         <p class="flow-copy">Gunakan informasi pemakaian sebagai titik awal untuk memeriksa perubahan pola dan menentukan tindak lanjut bersama tim gedung.</p>
       </div>
-      <div class="container outcome-grid">
+      <div class="container outcome-grid" data-reveal-stagger>
         <article class="outcome-card"><span class="step">01 · MASALAH AWAL</span><h3>Tagihan naik</h3><p>Tim melihat kenaikan biaya, tetapi belum mengetahui penyebabnya.</p></article>
         <article class="outcome-card"><span class="step">02 · YANG DIPETAKAN</span><h3>Titik penggunaan</h3><p>Pemakaian ditinjau berdasarkan fase, meter, dan area.</p></article>
         <article class="outcome-card"><span class="step">03 · YANG TERLIHAT</span><h3>Pola pemakaian</h3><p>Perubahan waktu dan beban dapat dibandingkan dengan pola sebelumnya.</p></article>
@@ -439,11 +459,11 @@
 
     <section class="section">
       <div class="container">
-        <div class="split">
+        <div class="split" data-reveal="up">
           <div class="split-copy"><p class="eyebrow">Panduan energi gedung</p><h2>Memahami energi gedung.</h2></div>
           <p class="flow-copy">Kenali istilah dan pertanyaan dasar untuk membantu tim membaca penggunaan energi dengan lebih terarah.</p>
         </div>
-        <div class="resource-grid">
+        <div class="resource-grid" data-reveal-stagger>
           <article class="resource-card resource-card--dark"><p class="eyebrow">Panduan praktis</p><h3>Checklist Pemantauan Energi Gedung</h3><p>Mulai dengan daftar pemeriksaan yang dapat disesuaikan dengan kondisi gedung.</p><a href="#demo">Minta checklist <span class="arrow">↗</span></a></article>
           <article class="resource-card"><p class="eyebrow">Dasar pengukuran</p><h3>Apa yang tidak terlihat dari total tagihan energi?</h3><p>Kenali perbedaan angka total dan pola pemakaian.</p><a href="#faq">Lihat panduan <span class="arrow">↗</span></a></article>
           <article class="resource-card"><p class="eyebrow">Istilah energi</p><h3>Cara membaca fase dan konsumsi gedung</h3><p>Ringkasan sederhana untuk memulai percakapan di tim fasilitas.</p><a href="#cara-kerja">Pelajari alurnya <span class="arrow">↗</span></a></article>
@@ -453,8 +473,8 @@
 
     <section class="section section--soft" id="faq">
       <div class="container faq-layout">
-        <div class="section-heading"><p class="eyebrow">FAQ</p><h2>Pertanyaan yang sering muncul.</h2></div>
-        <div class="faq-list">
+        <div class="section-heading" data-reveal="left"><p class="eyebrow">FAQ</p><h2>Pertanyaan yang sering muncul.</h2></div>
+        <div class="faq-list" data-reveal-stagger>
           <details><summary>Perangkat apa yang dibutuhkan?</summary><p>Konfigurasi mengikuti panel dan titik ukur yang ingin dipantau. Tim perlu meninjau kondisi lokasi sebelum menentukan perangkat yang sesuai.</p></details>
           <details><summary>Bagaimana instalasi dilakukan?</summary><p>Ruang lingkup pemasangan ditentukan setelah survei dan pembahasan kebutuhan gedung. Jadwalkan demo untuk mendiskusikan prosesnya.</p></details>
           <details><summary>Data apa yang dibutuhkan?</summary><p>Mulai dari informasi dasar gedung, titik meter, dan periode tagihan yang tersedia. Kebutuhan rinci dapat berbeda untuk setiap lokasi.</p></details>
@@ -465,8 +485,8 @@
     </section>
 
     <section class="contact-scene" id="demo" aria-labelledby="demo-title">
-      <img src="assets/oyivolt-demo-v2.jpg" alt="" aria-hidden="true">
-      <form class="contact-card" id="demo-form">
+      <img src="assets/oyivolt-demo-v2.jpg" data-parallax alt="" aria-hidden="true">
+      <form class="contact-card" id="demo-form" data-reveal="zoom" data-scroll-parallax="0.045">
         <p class="eyebrow eyebrow--orange">Mulai percakapan</p>
         <h2 id="demo-title">Jadwalkan demo OyiVolt.</h2>
         <p>Ceritakan sedikit tentang gedung Anda agar kebutuhan demo bisa dibahas.</p>
@@ -485,7 +505,7 @@
 
   <footer class="footer">
     <div class="container">
-      <div class="footer-main">
+      <div class="footer-main" data-reveal-stagger>
         <div><a class="footer-brand" href="#top">OyiVolt</a><p>Memahami energi gedung<br>dari data yang lebih terarah.</p></div>
         <div class="footer-col"><h3>Jelajahi</h3><a href="#cara-kerja">Cara kerja</a><a href="#fitur">Fitur</a><a href="#dashboard">Pratinjau dashboard</a></div>
         <div class="footer-col"><h3>Untuk tim gedung</h3><a href="#masalah">Pemantauan energi</a><a href="#faq">Pertanyaan umum</a><a href="#demo">Jadwalkan demo</a></div>
@@ -496,11 +516,96 @@
   </footer>
 
   <script>
-    document.querySelector('#demo-form').addEventListener('submit', (event) => {
+    const revealTargets = new Set(document.querySelectorAll('[data-reveal]'));
+    document.querySelectorAll('[data-reveal-stagger]').forEach((group) => {
+      Array.from(group.children).forEach((child, index) => {
+        child.dataset.reveal ||= 'up';
+        child.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 85}ms`);
+        revealTargets.add(child);
+      });
+    });
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    revealTargets.forEach((target) => target.classList.add('reveal'));
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      revealTargets.forEach((target) => target.classList.add('is-visible'));
+    } else {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -36px 0px' });
+      revealTargets.forEach((target) => revealObserver.observe(target));
+    }
+
+    const scrollProgress = document.querySelector('.scroll-progress');
+    const parallaxImages = prefersReducedMotion ? [] : Array.from(document.querySelectorAll('[data-parallax]'));
+    const depthLayers = prefersReducedMotion ? [] : Array.from(document.querySelectorAll('[data-scroll-parallax]'));
+    let progressQueued = false;
+    const updateParallax = () => {
+      const viewportCenter = window.innerHeight / 2;
+      parallaxImages.forEach((image) => {
+        const frame = image.parentElement.getBoundingClientRect();
+        if (frame.bottom < 0 || frame.top > window.innerHeight) return;
+        const frameCenter = frame.top + frame.height / 2;
+        const offset = Math.max(-44, Math.min(44, (viewportCenter - frameCenter) * .12));
+        image.style.setProperty('--parallax-y', `${offset.toFixed(1)}px`);
+      });
+      depthLayers.forEach((layer) => {
+        const bounds = layer.getBoundingClientRect();
+        if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
+        const center = bounds.top + bounds.height / 2;
+        const speed = Number(layer.dataset.scrollParallax) || .05;
+        const offset = Math.max(-42, Math.min(42, (viewportCenter - center) * speed));
+        layer.style.setProperty('--scroll-parallax-y', `${offset.toFixed(1)}px`);
+      });
+    };
+    const updateScrollProgress = () => {
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollableHeight > 0 ? Math.min(window.scrollY / scrollableHeight, 1) : 0;
+      scrollProgress.style.transform = `scaleX(${progress})`;
+      updateParallax();
+      progressQueued = false;
+    };
+    const queueScrollProgress = () => {
+      if (!progressQueued) {
+        progressQueued = true;
+        window.requestAnimationFrame(updateScrollProgress);
+      }
+    };
+    window.addEventListener('scroll', queueScrollProgress, { passive: true });
+    window.addEventListener('resize', queueScrollProgress);
+    updateScrollProgress();
+
+    const canTiltCards = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches;
+    if (canTiltCards) {
+      document.querySelectorAll('.feature-card, .role, .outcome-card, .resource-card, .preview-card, .dashboard-shell').forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          const bounds = card.getBoundingClientRect();
+          const x = (event.clientX - bounds.left) / bounds.width;
+          const y = (event.clientY - bounds.top) / bounds.height;
+          const strength = card.matches('.dashboard-shell') ? 3.5 : 8;
+          card.style.setProperty('--tilt-x', `${((.5 - y) * strength).toFixed(2)}deg`);
+          card.style.setProperty('--tilt-y', `${((x - .5) * strength * 1.25).toFixed(2)}deg`);
+          card.classList.add('is-tilting');
+        });
+        card.addEventListener('pointerleave', () => {
+          card.classList.remove('is-tilting');
+          card.style.removeProperty('--tilt-x');
+          card.style.removeProperty('--tilt-y');
+        });
+      });
+    }
+
+    document.querySelector('#demo-form')?.addEventListener('submit', (event) => {
       event.preventDefault();
       document.querySelector('#form-status').textContent = 'Tampilan formulir berfungsi. Sambungkan endpoint untuk menerima permintaan demo.';
     });
-    document.querySelector('#year').textContent = new Date().getFullYear();
+    const year = document.querySelector('#year');
+    if (year) year.textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
